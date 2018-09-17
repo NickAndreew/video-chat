@@ -1,12 +1,12 @@
 package webrtc.signaling.socket;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import webrtc.signaling.model.SignalMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
+import webrtc.signaling.model.SignalMessage;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +20,6 @@ public class SignalingSocketHandler extends TextWebSocketHandler {
     private static final String RTC_TYPE = "rtc";
     private static final String GENERATE_URL_TYPE = "generateUrl";
     private static final String DISCONNECT_TYPE = "disconnect";
-
 
 
     // Jackson JSON converter
@@ -116,7 +115,7 @@ public class SignalingSocketHandler extends TextWebSocketHandler {
             SignalMessage sm = new SignalMessage();
             sm.setType("generateUrl");
             sm.setDest(signalMessage.getDest());
-            sm.setData("localhost:8081/src/index.html?n="+clientIds.get(connSession.getId()));
+            sm.setData("localhost:8081/src/index.html?n=" + clientIds.get(connSession.getId()));
 
             String stringifiedJSONmsg = objectMapper.writeValueAsString(sm);
 
