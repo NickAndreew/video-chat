@@ -1,8 +1,5 @@
-package fr.mabreizh.webrtc.signaling.model;
+package webrtc.signaling.model;
 
-/**
- * @author Guillaume Gerbaud
- */
 public class SignalMessage {
 
     private String type;

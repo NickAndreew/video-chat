@@ -1,7 +1,7 @@
-package fr.mabreizh.webrtc.signaling.socket;
+package webrtc.signaling.socket;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fr.mabreizh.webrtc.signaling.model.SignalMessage;
+import webrtc.signaling.model.SignalMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.socket.TextMessage;
@@ -11,15 +11,16 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author Guillaume Gerbaud
- */
+
 public class SignalingSocketHandler extends TextWebSocketHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(SignalingSocketHandler.class);
 
     private static final String LOGIN_TYPE = "login";
     private static final String RTC_TYPE = "rtc";
+    private static final String GENERATE_URL_TYPE = "generateUrl";
+    private static final String DISCONNECT_TYPE = "disconnect";
+
 
 
     // Jackson JSON converter
@@ -28,7 +29,7 @@ public class SignalingSocketHandler extends TextWebSocketHandler {
     // Here is our Directory (MVP way)
     // This map saves sockets by usernames
     private Map<String, WebSocketSession> clients = new HashMap<String, WebSocketSession>();
-    // Thus map saves username by socket ID
+    // That map saves username by socket ID
     private Map<String, String> clientIds = new HashMap<String, String>();
 
     @Override
@@ -37,7 +38,7 @@ public class SignalingSocketHandler extends TextWebSocketHandler {
 
         SignalMessage signalMessage = objectMapper.readValue(message.getPayload(), SignalMessage.class);
 
-        if (LOGIN_TYPE.equalsIgnoreCase(signalMessage.getType())) {
+        if (LOGIN_TYPE.equalsIgnoreCase(signalMessage.getType()) && !signalMessage.getData().equals("")) {
             // It's a login message so we assume data to be a String representing the username
             String username = (String) signalMessage.getData();
 
@@ -51,6 +52,17 @@ public class SignalingSocketHandler extends TextWebSocketHandler {
                 clientIds.put(session.getId(), username);
             } else {
                 LOG.debug("Login {} : KO", username);
+                SignalMessage out = new SignalMessage();
+                out.setType("exception");
+                out.setDest(clientIds.get(session.getId()));
+                out.setData("This name is already in use, please choose a different one or session is closed.");
+
+                // Convert our object back to JSON
+                String stringifiedJSONmsg = objectMapper.writeValueAsString(out);
+
+                LOG.debug("send message {}", stringifiedJSONmsg);
+
+                session.sendMessage(new TextMessage(stringifiedJSONmsg));
             }
 
         } else if (RTC_TYPE.equalsIgnoreCase(signalMessage.getType())) {
@@ -60,7 +72,6 @@ public class SignalingSocketHandler extends TextWebSocketHandler {
             WebSocketSession destSocket = clients.get(dest);
             // if the socket exists and is open, we go on
             if (destSocket != null && destSocket.isOpen()) {
-
                 // We write the message to send to the dest socket (it's our propriatary format)
 
                 SignalMessage out = new SignalMessage();
@@ -78,7 +89,40 @@ public class SignalingSocketHandler extends TextWebSocketHandler {
 
                 destSocket.sendMessage(new TextMessage(stringifiedJSONmsg));
             }
-        }
+        } else if (DISCONNECT_TYPE.equalsIgnoreCase(signalMessage.getType())) {
+            System.out.println("Disconnect method's running...");
 
+            String username = (String) signalMessage.getDest();
+            WebSocketSession connSession = clients.get(username);
+
+            SignalMessage sm = new SignalMessage();
+            sm.setType("disconnect");
+            sm.setDest(signalMessage.getDest());
+            sm.setData(signalMessage.getData());
+
+            String stringifiedJSONmsg = objectMapper.writeValueAsString(sm);
+
+            LOG.debug("send message {}", stringifiedJSONmsg);
+
+            session.sendMessage(new TextMessage(stringifiedJSONmsg));
+
+            session.close();
+        } else if (GENERATE_URL_TYPE.equalsIgnoreCase(signalMessage.getType())) {
+            System.out.println("GENERATING URL FOR JOIN method's running...");
+
+            String username = (String) signalMessage.getDest();
+            WebSocketSession connSession = clients.get(username);
+
+            SignalMessage sm = new SignalMessage();
+            sm.setType("generateUrl");
+            sm.setDest(signalMessage.getDest());
+            sm.setData("localhost:8081/src/index.html?n="+clientIds.get(connSession.getId()));
+
+            String stringifiedJSONmsg = objectMapper.writeValueAsString(sm);
+
+            LOG.debug("send message {}", stringifiedJSONmsg);
+
+            session.sendMessage(new TextMessage(stringifiedJSONmsg));
+        }
     }
 }
