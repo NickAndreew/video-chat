@@ -21,7 +21,7 @@ window.onload = function () {
 	var loc = window.location.href.split("com")[1];
 
 	var text = chnameText.textContent;
-	if(loc!="" && loc!=null){
+	if(loc != "" && loc != null && loc != undefined){
 		chnameText.textContent = text + " with User : " + loc.split("=")[1];
 		join = true;
 	} else {
