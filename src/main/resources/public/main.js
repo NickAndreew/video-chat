@@ -48,7 +48,12 @@ function connect(username) {
 	var uri = "ws://video-chat-demo-test.herokuapp.com/signal";
 
 	userName = username;
-	peer = window.location.href.split("html")[1].split("=")[1];
+	if (window.location.href.split("html")[1]!=null) {
+	    peer = window.location.href.split("html")[1].split("=")[1];
+    } else {
+        peer = "";
+    }
+
 
 	if (username != peer) {
 
