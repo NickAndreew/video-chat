@@ -45,7 +45,7 @@ function connect(username) {
 	console.log('connect');
 	// var loc = window.location;
 	// var uri = "ws://" + loc.hostname + ":8080/signal";
-	var uri = "ws://video-chat-demo-test.herokuapp.com/signal";
+	var uri = "wss://video-chat-demo-test.herokuapp.com/signal";
 
 	userName = username;
 	if (window.location.href.split("html")[1]!=null) {
