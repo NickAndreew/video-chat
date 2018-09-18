@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<title>WebRTC client</title>
+	</head>
+
+	<body>
+		<div class="container">
+			<div>
+				<div>
+					<a href="http://localhost:8081/src/index.html" style="text-decoration: none; color: black">
+						<h2>Video Chat</h2>
+					</a>
+				</div>
+				<label id="chnameText">Choose Name for chat</label>
+				<input type="text" id="chname" name="chname">
+				<button id="connectButton" style="cursor: pointer; display: block">Connect</button>
+				<button id="streamingButton" style="cursor: pointer; display: none">Start Streaming</button>
+				<button id="sendOffer" style="cursor:pointer; display: none">Resend Offer to HOST</button>
+				<button id="generateURLforJoin" style="cursor: pointer; display: none">Generate URL for Join</button>
+				<p id="joinUrlText"></p>
+
+			</div>
+			<div id="videos">
+				<div>
+					<video id="remoteView" width="640" height="480" autoplay style="display: inline;"></video>
+				</div>
+
+				<div>
+					<video id="selfView" width="320" height="240" autoplay style="display: inline;"></video>
+				</div>
+			</div>
+		</div>
+
+		<!-- <script web='https://code.google.com/p/webrtc/source/browse/trunk/samples/js/base/adapter.js'></script> -->
+		<script src='main.js'></script>
+	</body>
+
+</html>
