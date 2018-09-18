@@ -9,7 +9,7 @@ public class WebController {
 
     @RequestMapping(path="/", method = RequestMethod.GET)
     public String index(){
-        return "redirect:/src/main/resources/web/index.html";
+        return "redirect://src/main/resources/web/index.html";
     }
 
 }
