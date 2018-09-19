@@ -22,6 +22,7 @@ window.onload = function () {
 	// console.log("Loc: "+loc);
 	var text = chnameText.textContent;
 	if(loc!=null && loc!=""){
+		console.log("\nLoc: "+loc);
 		chnameText.textContent = text + " with User : " + loc.split("=")[1];
 		join = true;
 	} else {
