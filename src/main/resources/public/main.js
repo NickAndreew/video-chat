@@ -20,7 +20,7 @@ window.onload = function () {
 	console.log("THE PAGE HAS LOADED");
 	var domain = "https://video-chat-demo-test.herokuapp.com/";
 	var loc = window.location.href;
-	
+
 	var text = chnameText.textContent;
 	if(loc!=domain){
 		chnameText.textContent = text + " with User : " + loc.split("com")[1].split("=")[1];
@@ -179,14 +179,18 @@ function startRTC() {
 		'audio': true,
 		'video': true
 	}, function (stream) {
+		console.log("Getting 'v' & 'a' streams");
 		selfView.src = URL.createObjectURL(stream);
 		globStream = stream;
 		pc.addStream(stream);
+		console.log("Streams added to PeerConnection");
 	}, logError);
 
 	
 	if(peer!=null && peer!=""){
+		console.log("Peer is : " + a);
 		setTimeout(function(){ 
+			console.log("Sending offer to peer");
 			offer(peer);
 			sendOffer.style = "display: block"; 
 		}, 2000);
@@ -196,9 +200,10 @@ function startRTC() {
 }
 
 function offer(dest) {
-	console.log("Offer is sent to " + dest);
+	console.log("Offer method is trying to send offer to '" + dest +"'");
 	peer = dest;
 	pc.createOffer(localDescCreated, logError);
+	console.log("Offer have been created.");
 }
 
 function localDescCreated(desc) {
