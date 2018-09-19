@@ -20,9 +20,9 @@ window.onload = function () {
 	console.log("THE PAGE HAS LOADED");
 	var domain = "https://video-chat-demo-test.herokuapp.com/";
 	var loc = window.location.href;
-	// console.log("Loc: "+loc);
+	
 	var text = chnameText.textContent;
-	if(window.location.href!=domain){
+	if(loc!=domain){
 		chnameText.textContent = text + " with User : " + loc.split("com")[1].split("=")[1];
 		join = true;
 	} else {
