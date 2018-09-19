@@ -195,7 +195,7 @@ function startRTC() {
 			console.log("Sending offer to peer");
 			offer(peer);
 			sendOffer.style = "display: block"; 
-		}, 2000);
+		}, 3000);
 	} else {
 		generateURLforJoin.style = "display: block";
 	}
