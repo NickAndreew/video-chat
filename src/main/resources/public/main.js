@@ -188,7 +188,7 @@ function startRTC() {
 
 	
 	if(peer!=null && peer!=""){
-		console.log("Peer is : " + a);
+		console.log("Peer is : " + peer);
 		setTimeout(function(){ 
 			console.log("Sending offer to peer");
 			offer(peer);
