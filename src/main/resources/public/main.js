@@ -22,7 +22,7 @@ window.onload = function () {
 	var loc = window.location.href;
 	// console.log("Loc: "+loc);
 	var text = chnameText.textContent;
-	if(loc.length>domain.length){
+	if(window.location.href!=domain){
 		chnameText.textContent = text + " with User : " + loc.split("com")[1].split("=")[1];
 		join = true;
 	} else {
