@@ -18,12 +18,12 @@ var configuration = {
 
 window.onload = function () {
 	console.log("THE PAGE HAS LOADED");
-	var loc = window.location.href.split("com")[1];
+	var domain = "https://video-chat-demo-test.herokuapp.com/";
+	var loc = window.location.href;
 	// console.log("Loc: "+loc);
 	var text = chnameText.textContent;
-	if(loc!=null && loc!=""){
-		console.log("\nLoc: "+loc);
-		chnameText.textContent = text + " with User : " + loc.split("=")[1];
+	if(loc.length>domain.length){
+		chnameText.textContent = text + " with User : " + loc.split("com")[1].split("=")[1];
 		join = true;
 	} else {
 		join = false;
