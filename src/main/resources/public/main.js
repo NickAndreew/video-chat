@@ -169,7 +169,7 @@ function startRTC() {
 			streamingButtonSwitch();
 			console.log("StreamingButtonSwitch worked");
 			if(join){
-				sendOffer.style = "display: block";
+				// sendOffer.style = "display: none";
 			} 
 		} else if(pc.iceConnectionState=="connected"){
 			sendOffer.style = "display: none"; 
