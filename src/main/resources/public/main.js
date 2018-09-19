@@ -21,7 +21,7 @@ window.onload = function () {
 	var loc = window.location.href.split("com")[1];
 
 	var text = chnameText.textContent;
-	if(loc.length>2){
+	if(loc!=null && loc!=""){
 		chnameText.textContent = text + " with User : " + loc.split("=")[1];
 		join = true;
 	} else {
@@ -43,8 +43,8 @@ function logError(error) {
 
 function connect(username) {
 	console.log('connect');
-	// var loc = window.location;
-	// var uri = "ws://" + loc.hostname + ":8080/signal";
+//	 var loc = window.location;
+//	 var uri = "ws://" + loc.hostname + ":8080/signal";
 	var uri = "wss://video-chat-demo-test.herokuapp.com/signal";
 
 	userName = username;
