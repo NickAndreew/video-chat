@@ -19,7 +19,7 @@ var configuration = {
 window.onload = function () {
 	console.log("THE PAGE HAS LOADED");
 	var loc = window.location.href.split("com")[1];
-
+	console.log("Loc: "+loc);
 	var text = chnameText.textContent;
 	if(loc!=null && loc!=""){
 		chnameText.textContent = text + " with User : " + loc.split("=")[1];
