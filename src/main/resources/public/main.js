@@ -164,8 +164,10 @@ function startRTC() {
 	};
 
 	pc.oniceconnectionstatechange = function () {
+		console.log("IceConnectionState changed");
 		if(pc.iceConnectionState=="failed" || pc.iceConnectionState=="disconnected"){
 			streamingButtonSwitch();
+			console.log("StreamingButtonSwitch worked");
 			if(join){
 				sendOffer.style = "display: block";
 			} 
