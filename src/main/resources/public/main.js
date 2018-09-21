@@ -80,12 +80,12 @@ function connect(username) {
 
 		sock.onclose = function (e) {
 			console.log('close', e);
+			setConnected(false);
 			if (sock != null) {
 				sock.close();
 				pc.close();
 				remoteView.removeAttribute("src");
 				selfView.removeAttribute("src");
-				setConnected(false);
 			}
 			
 			// setConnected(false);
