@@ -81,13 +81,13 @@ function connect(username) {
 		sock.onclose = function (e) {
 			console.log('close', e);
 			setConnected(false);
+			alert("Disconnected from server. Please reconnect or reload the page to start again.");	
 			if (sock != null) {
 				sock.close();
 				pc.close();
 				remoteView.removeAttribute("src");
 				selfView.removeAttribute("src");
-			}
-			alert("Disconnected from server. Please reconnect or reload the page to start again.");			
+			}		
 		}
 
 		sock.onerror = function (e) {
