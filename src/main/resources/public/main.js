@@ -9,7 +9,6 @@ var userName;
 // if user is host => join == false, else => join == true
 var join;
 
-var loggedIn = false;
 var configuration = {
 	'iceServers': [{
 		'url': 'stun:stun.example.org'
@@ -71,10 +70,11 @@ function connect(username) {
 					}
 				)
 			);
+			alert("Connected to server via name: " + username);
 
 			streamingButton.style = "display: block";
 			connectButton.textContent = "Reconnect";
-			loggedIn = true;
+			
 			setConnected(true);
 		}
 
@@ -87,8 +87,7 @@ function connect(username) {
 				remoteView.removeAttribute("src");
 				selfView.removeAttribute("src");
 			}
-			
-			// setConnected(false);
+			alert("Disconnected from server. Please reconnect or reload the page to start again.");			
 		}
 
 		sock.onerror = function (e) {
