@@ -73,7 +73,7 @@ function connect(username) {
 			);
 
 			streamingButton.style = "display: block";
-			connectButton.textContent = "Rename";
+			connectButton.textContent = "Reconnect";
 			loggedIn = true;
 			setConnected(true);
 		}
