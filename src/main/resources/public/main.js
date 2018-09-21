@@ -22,7 +22,7 @@ window.onload = function () {
 	var loc = window.location.href;
 
 	var text = chnameText.textContent;
-	if(loc!=domain){
+	if (loc != domain) {
 		chnameText.textContent = text + " with User : " + loc.split("com")[1].split("=")[1];
 		join = true;
 	} else {
@@ -44,16 +44,16 @@ function logError(error) {
 
 function connect(username) {
 	console.log('connect');
-//	 var loc = window.location;
-//	 var uri = "ws://" + loc.hostname + ":8080/signal";
+	//	 var loc = window.location;
+	//	 var uri = "ws://" + loc.hostname + ":8080/signal";
 	var uri = "wss://video-chat-demo-test.herokuapp.com/signal";
 
 	userName = username;
-	if (window.location.href.split("com")[1]!=null) {
-	    peer = window.location.href.split("com")[1].split("=")[1];
-    } else {
-        peer = "";
-    }
+	if (window.location.href.split("com")[1] != null) {
+		peer = window.location.href.split("com")[1].split("=")[1];
+	} else {
+		peer = "";
+	}
 
 
 	if (username != peer) {
@@ -75,8 +75,7 @@ function connect(username) {
 			streamingButton.style = "display: block";
 			connectButton.textContent = "Rename";
 			loggedIn = true;
-			connectionStatus.textContent = "Connected";
-			connectionStatus.style = "color: green";
+			setConnected(true);
 		}
 
 		sock.onclose = function (e) {
@@ -84,14 +83,12 @@ function connect(username) {
 			if (sock != null) {
 				sock.close();
 				pc.close();
+				remoteView.removeAttribute("src");
+				selfView.removeAttribute("src");
+				setConnected(false);
 			}
+			
 			// setConnected(false);
-
-			remoteView.removeAttribute("src");
-			selfView.removeAttribute("src");
-			connectionStatus.textContent = "Disconnected";
-			connectionStatus.style = "color: red";
-
 		}
 
 		sock.onerror = function (e) {
@@ -130,8 +127,7 @@ function connect(username) {
 			} else if (message.type == 'disconnect') {
 				console.log("RECEIVED MESSAGE -> 'DISCONNECT'");
 				stopStreaming();
-				connectionStatus.textContent = "Disconnected";
-				connectionStatus.style = "color: red";
+				setConnected(false);
 
 			} else if (message.type == 'generateUrl') {
 				if (joinUrlText.textContent == "") {
@@ -142,7 +138,6 @@ function connect(username) {
 	} else {
 		alert("Please choose a different name.");
 	}
-	// setConnected(true);
 }
 
 function startRTC() {
@@ -171,19 +166,17 @@ function startRTC() {
 
 	pc.oniceconnectionstatechange = function () {
 		console.log("IceConnectionState changed");
-		if(pc.iceConnectionState=="failed" || pc.iceConnectionState=="disconnected"){
+		if (pc.iceConnectionState == "failed" || pc.iceConnectionState == "disconnected") {
 			streamingButtonSwitch();
 			console.log("StreamingButtonSwitch worked");
-			if(join){
+			if (join) {
 				// sendOffer.style = "display: none";
-			} 
-			connectionStatus.textContent = "Disconnected";
-			connectionStatus.style = "color: red";
+			}
+			setConnected(false);
 
-		} else if(pc.iceConnectionState=="connected"){
-			sendOffer.style = "display: none"; 
-			connectionStatus.textContent = "Connected";
-			connectionStatus.style = "color: green";
+		} else if (pc.iceConnectionState == "connected") {
+			sendOffer.style = "display: none";
+			setConnected(true);
 		}
 	}
 
@@ -199,13 +192,13 @@ function startRTC() {
 		console.log("Streams added to PeerConnection");
 	}, logError);
 
-	
-	if(join){
+
+	if (join) {
 		console.log("Peer is : " + peer);
-		setTimeout(function(){ 
+		setTimeout(function () {
 			console.log("Sending offer to peer");
 			offer(peer);
-			sendOffer.style = "display: block"; 
+			sendOffer.style = "display: block";
 		}, 3000);
 	} else {
 		generateURLforJoin.style = "display: block";
@@ -213,7 +206,7 @@ function startRTC() {
 }
 
 function offer(dest) {
-	console.log("Offer method is trying to send offer to '" + dest +"'");
+	console.log("Offer method is trying to send offer to '" + dest + "'");
 	peer = dest;
 	pc.createOffer(localDescCreated, logError);
 	console.log("Offer have been created.");
@@ -250,8 +243,6 @@ function disconnect() {
 			}
 		}
 	);
-
-	// setConnected(false);
 }
 
 function stopStreaming() {
@@ -290,6 +281,16 @@ function nameIsBusy(e) {
 	document.getElementById("chname").value = '';
 }
 
+function setConnected(bool){
+	if(bool){
+		connectionStatus.textContent = "Connected";
+		connectionStatus.style = "color: green";
+	} else {
+		connectionStatus.textContent = "Disconnected";
+		connectionStatus.style = "color: red";	
+	}
+}
+
 
 connectButton.addEventListener("click", function () {
 	var input = chname.value;
@@ -321,7 +322,7 @@ function streamingButtonSwitch() {
 
 		streamingButton.textContent = "Stop Streaming";
 		connectButton.style = "display: none";
-		
+
 	}
 }
 
@@ -339,9 +340,9 @@ generateURLforJoin.addEventListener("click", function () {
 });
 
 
-sendOffer.addEventListener("click", function (){
+sendOffer.addEventListener("click", function () {
 	// streamingButtonSwitch();
-	setTimeout(function(){
+	setTimeout(function () {
 		offer(peer);
 
 	}, 1000);
