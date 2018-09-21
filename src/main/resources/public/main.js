@@ -76,6 +76,7 @@ function connect(username) {
 			connectButton.textContent = "Rename";
 			loggedIn = true;
 			connectionStatus.textContent = "Connected";
+			connectionStatus.style = "color: green";
 		}
 
 		sock.onclose = function (e) {
@@ -89,6 +90,8 @@ function connect(username) {
 			remoteView.removeAttribute("src");
 			selfView.removeAttribute("src");
 			connectionStatus.textContent = "Disconnected";
+			connectionStatus.style = "color: red";
+
 		}
 
 		sock.onerror = function (e) {
@@ -127,7 +130,9 @@ function connect(username) {
 			} else if (message.type == 'disconnect') {
 				console.log("RECEIVED MESSAGE -> 'DISCONNECT'");
 				stopStreaming();
-				connectionsStatus.textContent = "Disconnected";
+				connectionStatus.textContent = "Disconnected";
+				connectionStatus.style = "color: red";
+
 			} else if (message.type == 'generateUrl') {
 				if (joinUrlText.textContent == "") {
 					joinUrlText.textContent = message.data;
@@ -173,9 +178,12 @@ function startRTC() {
 				// sendOffer.style = "display: none";
 			} 
 			connectionStatus.textContent = "Disconnected";
+			connectionStatus.style = "color: red";
+
 		} else if(pc.iceConnectionState=="connected"){
 			sendOffer.style = "display: none"; 
 			connectionStatus.textContent = "Connected";
+			connectionStatus.style = "color: green";
 		}
 	}
 
