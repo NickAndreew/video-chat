@@ -34,21 +34,20 @@
 				<button id="streamingButton" style="cursor: pointer; display: none">Start Streaming</button>
 				<button id="sendOffer" style="cursor:pointer; display: none">Resend Offer to HOST</button>
 				<button id="generateURLforJoin" style="cursor: pointer; display: none">Generate URL for Join</button>
+				<p id="joinUrlText"></p>
 			</div>
-
-			<div id="searchFriendOnlineDiv">
-
-			</div>
-			<p id="joinUrlText"></p>
+			
 
 		</div>
 		<div id="videos">
 			<div>
-				<video id="remoteView" width="640" height="480" autoplay style="display: inline;"></video>
+				<video id="remoteView" width="640" height="480" autoplay style="display: inline;">
+					<video id="selfView" width="320" height="240" autoplay style="display: inline;"></video>
+				</video>
 			</div>
 
 			<div>
-				<video id="selfView" width="320" height="240" autoplay style="display: inline;"></video>
+				<!-- <video id="selfView" width="320" height="240" autoplay style="display: inline;"></video> -->
 			</div>
 		</div>
 	</div>
