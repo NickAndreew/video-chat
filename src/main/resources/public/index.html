@@ -1,39 +1,59 @@
 <!DOCTYPE html>
 <html>
 
-	<head>
-		<title>WebRTC client</title>
-	</head>
+<head>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
 
-	<body>
-		<div class="container">
-			<div>
-				<div>
-					<a href="https://video-chat-demo-test.herokuapp.com/" style="text-decoration: none; color: black">
-						<h2>Video Chat</h2>
+	<title>WebRTC client</title>
+</head>
+
+<body>
+	<div class="">
+		<nav class="navbar navbar-inverse" style="background-color: #343a40 !important;">
+			<div class="container-fluid">
+				<div class="navbar-header" style="display: flex; flex-direction: row"> 
+					<h2 style="text-decoration: none; color: rgb(162, 162, 162);">VideoChat</h2>
+					<a class="nav-link" href="https://video-chat-demo-test.herokuapp.com/" style="text-decoration: none; color: rgb(255, 255, 255);">
+						Create Chat Room
 					</a>
 				</div>
+
+				<ul class="nav navbar-nav navbar-right">
+					<li style="color:whitesmoke" id="connectionStatus">Disconnected</li>
+				</ul>
+			</div>
+		</nav>
+		<div>
+			<div style="display:flex; flex-direction: column; align-items:center; text-align: center; margin: 0 auto;">
 				<label id="chnameText">Choose Name for chat</label>
-				<input type="text" id="chname" name="chname">
+				<input type="text" id="chname" class="form-inline" name="chname">
 				<button id="connectButton" style="cursor: pointer; display: block">Connect</button>
 				<button id="streamingButton" style="cursor: pointer; display: none">Start Streaming</button>
 				<button id="sendOffer" style="cursor:pointer; display: none">Resend Offer to HOST</button>
 				<button id="generateURLforJoin" style="cursor: pointer; display: none">Generate URL for Join</button>
-				<p id="joinUrlText"></p>
+			</div>
+
+			<div id="searchFriendOnlineDiv">
 
 			</div>
-			<div id="videos">
-				<div>
-					<video id="remoteView" width="640" height="480" autoplay style="display: inline;"></video>
-				</div>
+			<p id="joinUrlText"></p>
 
-				<div>
-					<video id="selfView" width="320" height="240" autoplay style="display: inline;"></video>
-				</div>
+		</div>
+		<div id="videos">
+			<div>
+				<video id="remoteView" width="640" height="480" autoplay style="display: inline;"></video>
+			</div>
+
+			<div>
+				<video id="selfView" width="320" height="240" autoplay style="display: inline;"></video>
 			</div>
 		</div>
+	</div>
 
-		<script src='main.js'></script>
-	</body>
+	<script src='main.js'></script>
+</body>
 
 </html>

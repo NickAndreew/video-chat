@@ -75,8 +75,7 @@ function connect(username) {
 			streamingButton.style = "display: block";
 			connectButton.textContent = "Rename";
 			loggedIn = true;
-
-
+			connectionStatus.textContent = "Connected";
 		}
 
 		sock.onclose = function (e) {
@@ -89,6 +88,7 @@ function connect(username) {
 
 			remoteView.removeAttribute("src");
 			selfView.removeAttribute("src");
+			connectionStatus.textContent = "Disconnected";
 		}
 
 		sock.onerror = function (e) {
@@ -127,6 +127,7 @@ function connect(username) {
 			} else if (message.type == 'disconnect') {
 				console.log("RECEIVED MESSAGE -> 'DISCONNECT'");
 				stopStreaming();
+				connectionsStatus.textContent = "Disconnected";
 			} else if (message.type == 'generateUrl') {
 				if (joinUrlText.textContent == "") {
 					joinUrlText.textContent = message.data;
@@ -171,8 +172,10 @@ function startRTC() {
 			if(join){
 				// sendOffer.style = "display: none";
 			} 
+			connectionStatus.textContent = "Disconnected";
 		} else if(pc.iceConnectionState=="connected"){
 			sendOffer.style = "display: none"; 
+			connectionStatus.textContent = "Connected";
 		}
 	}
 
@@ -230,7 +233,6 @@ function sendMessage(payload) {
 function disconnect() {
 	console.log('disconnect');
 
-	// console.log('sending disconnect message to server...');
 	sendMessage(
 		{
 			type: "disconnect",
@@ -329,9 +331,8 @@ generateURLforJoin.addEventListener("click", function () {
 });
 
 
-
 sendOffer.addEventListener("click", function (){
-	streamingButtonSwitch();
+	// streamingButtonSwitch();
 	setTimeout(function(){
 		offer(peer);
 
