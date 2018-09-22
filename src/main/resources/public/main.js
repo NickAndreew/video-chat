@@ -5,8 +5,6 @@ var peer;
 var globStream;
 var remoteStream;
 var userName;
-
-// if user is host => join == false, else => join == true
 var join;
 var sock;
 
@@ -44,8 +42,6 @@ function logError(error) {
 
 function connect(username) {
 	console.log('connect');
-	//	 var loc = window.location;
-	//	 var uri = "ws://" + loc.hostname + ":8080/signal";
 	var uri = "wss://video-chat-demo-test.herokuapp.com/signal";
 
 	userName = username;
@@ -86,6 +82,7 @@ function connect(username) {
 			alert("Disconnected from server. Please reconnect or reload the page to start again.");
 
 			streamingButton.style = "display: none";
+			streamingButton.textContent = "Start Streaming"
 			generateURLforJoin.style = "display: none";
 			connectButton.textContent = "Connect";
 			connectButton.style = "display: block";
