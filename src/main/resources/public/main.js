@@ -74,20 +74,27 @@ function connect(username) {
 
 			streamingButton.style = "display: block";
 			connectButton.textContent = "Reconnect";
-			
+
 			setConnected(true);
 		}
 
 		sock.onclose = function (e) {
 			console.log('close', e);
 			setConnected(false);
-			alert("Disconnected from server. Please reconnect or reload the page to start again.");	
+			stopStreaming();
+			alert("Disconnected from server. Please reconnect or reload the page to start again.");
+
+			streamingButton.style = "display: none";
+			generateURLforJoin.style = "display: none";
+			connectButton.textContent = "Connect";
+			connectButton.style = "display: block";
+
 			if (sock != null) {
 				sock.close();
 				pc.close();
 				remoteView.removeAttribute("src");
 				selfView.removeAttribute("src");
-			}		
+			}
 		}
 
 		sock.onerror = function (e) {
@@ -127,6 +134,12 @@ function connect(username) {
 				console.log("RECEIVED MESSAGE -> 'DISCONNECT'");
 				stopStreaming();
 				setConnected(false);
+
+				remoteView.removeAttribute("src");
+				selfView.removeAttribute("src");
+
+				streamingButtonSwitch();
+
 
 			} else if (message.type == 'generateUrl') {
 				if (joinUrlText.textContent == "") {
@@ -168,10 +181,11 @@ function startRTC() {
 		if (pc.iceConnectionState == "failed" || pc.iceConnectionState == "disconnected") {
 			streamingButtonSwitch();
 			console.log("StreamingButtonSwitch worked");
-			if (join) {
-				// sendOffer.style = "display: none";
-			}
+
 			setConnected(false);
+
+			remoteView.removeAttribute("src");
+			selfView.removeAttribute("src");
 
 		} else if (pc.iceConnectionState == "connected") {
 			sendOffer.style = "display: none";
@@ -242,6 +256,8 @@ function disconnect() {
 			}
 		}
 	);
+
+
 }
 
 function stopStreaming() {
@@ -280,13 +296,13 @@ function nameIsBusy(e) {
 	document.getElementById("chname").value = '';
 }
 
-function setConnected(bool){
-	if(bool){
+function setConnected(bool) {
+	if (bool) {
 		connectionStatus.textContent = "Connected";
 		connectionStatus.style = "color: green";
 	} else {
 		connectionStatus.textContent = "Disconnected";
-		connectionStatus.style = "color: red";	
+		connectionStatus.style = "color: red";
 	}
 }
 
