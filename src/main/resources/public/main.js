@@ -8,6 +8,7 @@ var userName;
 
 // if user is host => join == false, else => join == true
 var join;
+var sock;
 
 var configuration = {
 	'iceServers': [{
