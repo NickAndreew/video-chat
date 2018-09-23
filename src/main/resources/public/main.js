@@ -14,20 +14,6 @@ var configuration = {
 	}]
 };
 
-window.onload = function () {
-	console.log("THE PAGE HAS LOADED");
-	var domain = "https://video-chat-demo-test.herokuapp.com/";
-	var loc = window.location.href;
-
-	var text = chnameText.textContent;
-	if (loc != domain) {
-		chnameText.textContent = text + " with User : " + loc.split("com")[1].split("=")[1];
-		join = true;
-	} else {
-		join = false;
-	}
-};
-
 function goBack() {
 	window.history.back();
 }
@@ -68,6 +54,10 @@ function connect(username) {
 				)
 			);
 			alert("Connected to server via name: " + username);
+
+			window.setInterval(function(){
+				pingPong();
+			}, 58000);
 
 			streamingButton.style = "display: block";
 			connectButton.textContent = "Reconnect";
@@ -135,9 +125,6 @@ function connect(username) {
 
 				remoteView.removeAttribute("src");
 				selfView.removeAttribute("src");
-
-				streamingButtonSwitch();
-
 
 			} else if (message.type == 'generateUrl') {
 				if (joinUrlText.textContent == "") {
@@ -261,12 +248,10 @@ function disconnect() {
 function stopStreaming() {
 	console.log(globStream);
 	if (globStream != null) {
-
 		globStream.getTracks()
 			.forEach(
 				track => track.stop()
 			);
-
 	}
 
 	if (remoteStream != null) {
@@ -275,7 +260,6 @@ function stopStreaming() {
 			.forEach(
 				track => track.stop()
 			);
-
 	}
 
 	remoteView.pause();
@@ -304,20 +288,15 @@ function setConnected(bool) {
 	}
 }
 
-
-connectButton.addEventListener("click", function () {
-	var input = chname.value;
-
-	if (input != "") {
-		connect(input.toString());
-	} else {
-		alert("Please type name.")
+function pingPong(){
+	if(sock!=null){
+		console.log("Sock isn't null and client sent message to the server");
+		sendMessage({
+			type:"ping_pong",
+			dest: userName
+		});
 	}
-});
-
-streamingButton.addEventListener("click", function () {
-	streamingButtonSwitch();
-});
+}
 
 function streamingButtonSwitch() {
 	if (streamingButton.textContent == "Stop Streaming") {
@@ -335,9 +314,37 @@ function streamingButtonSwitch() {
 
 		streamingButton.textContent = "Stop Streaming";
 		connectButton.style = "display: none";
-
 	}
 }
+
+
+window.onload = function () {
+	console.log("THE PAGE HAS LOADED");
+	var domain = "https://video-chat-demo-test.herokuapp.com/";
+	var loc = window.location.href;
+
+	var text = chnameText.textContent;
+	if (loc != domain) {
+		chnameText.textContent = text + " with User : " + loc.split("com")[1].split("=")[1];
+		join = true;
+	} else {
+		join = false;
+	}
+};
+
+connectButton.addEventListener("click", function () {
+	var input = chname.value;
+
+	if (input != "") {
+		connect(input.toString());
+	} else {
+		alert("Please type name.")
+	}
+});
+
+streamingButton.addEventListener("click", function () {
+	streamingButtonSwitch();
+});
 
 generateURLforJoin.addEventListener("click", function () {
 	if (joinUrlText.textContent == "") {
@@ -354,10 +361,9 @@ generateURLforJoin.addEventListener("click", function () {
 
 
 sendOffer.addEventListener("click", function () {
-	// streamingButtonSwitch();
 	setTimeout(function () {
 		offer(peer);
 
 	}, 1000);
-
 });
+

@@ -1,4 +1,4 @@
 logging:
   level:
     ROOT: INFO
-    fr.mabreizh: DEBUG
+    mykyta.andreiev: DEBUG

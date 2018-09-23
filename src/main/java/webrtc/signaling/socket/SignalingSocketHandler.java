@@ -20,6 +20,7 @@ public class SignalingSocketHandler extends TextWebSocketHandler {
     private static final String RTC_TYPE = "rtc";
     private static final String GENERATE_URL_TYPE = "generateUrl";
     private static final String DISCONNECT_TYPE = "disconnect";
+    private static final String PING_PONG = "ping_pong";
 
 
     // Jackson JSON converter
@@ -121,6 +122,18 @@ public class SignalingSocketHandler extends TextWebSocketHandler {
 
             LOG.debug("send message {}", stringifiedJSONmsg);
 
+            session.sendMessage(new TextMessage(stringifiedJSONmsg));
+        } else if (PING_PONG.equalsIgnoreCase(signalMessage.getType())){
+            System.out.println("Ping Pong message from "+signalMessage.getDest());
+
+            SignalMessage sm = new SignalMessage();
+            sm.setType("ping_pong");
+            sm.setDest(signalMessage.getDest());
+            sm.setData("connected");
+
+            String stringifiedJSONmsg = objectMapper.writeValueAsString(sm);
+
+            LOG.debug("send message {}", stringifiedJSONmsg);
             session.sendMessage(new TextMessage(stringifiedJSONmsg));
         }
     }
