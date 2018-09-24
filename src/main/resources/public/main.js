@@ -288,6 +288,11 @@ function setConnected(bool) {
 	}
 }
 
+
+// ping pong sustains the connection between client and server as long as necessary, unless will not be disconnected manually.
+// alternative solution to search for => 
+// => 1. Find how to set WebSocket Connection timeout to custom time.
+// - https://github.com/abingham/runner_repl/issues/7
 function pingPong(){
 	if(sock!=null){
 		console.log("Sock isn't null and client sent message to the server");
