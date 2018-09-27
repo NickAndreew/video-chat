@@ -38,24 +38,26 @@ public class SignalingSocketHandler extends TextWebSocketHandler {
 
         SignalMessage signalMessage = objectMapper.readValue(message.getPayload(), SignalMessage.class);
 
-        if (LOGIN_TYPE.equalsIgnoreCase(signalMessage.getType()) && !signalMessage.getData().equals("")) {
+        if (LOGIN_TYPE.equalsIgnoreCase(signalMessage.getType())) {
             // It's a login message so we assume data to be a String representing the username
-            String username = (String) signalMessage.getData();
+            WebSocketSession client;
+            String username;
+            do {
+                username = Double.toString(Math.round(Math.random()*1000));
+                client = clients.get(username);
 
-            WebSocketSession client = clients.get(username);
-
-            // quick check to verify that the username is not already taken and active
-            if (client == null || !client.isOpen()) {
+            } while (client!=null);
+            // quick check to verify that the session is not running
+//            if (!client.isOpen()) {
                 LOG.debug("Login {} : OK", username);
                 // saves socket and username
                 clients.put(username, session);
                 clientIds.put(session.getId(), username);
-            } else {
-                LOG.debug("Login {} : KO", username);
+
                 SignalMessage out = new SignalMessage();
-                out.setType("exception");
-                out.setDest(clientIds.get(session.getId()));
-                out.setData("This name is already in use, please choose a different one or session is closed.");
+                out.setType("login_successful");
+                out.setDest(username);
+                out.setData("You have logged in with the following ID: "+username);
 
                 // Convert our object back to JSON
                 String stringifiedJSONmsg = objectMapper.writeValueAsString(out);
@@ -63,7 +65,8 @@ public class SignalingSocketHandler extends TextWebSocketHandler {
                 LOG.debug("send message {}", stringifiedJSONmsg);
 
                 session.sendMessage(new TextMessage(stringifiedJSONmsg));
-            }
+                System.out.println("Client with the assigned id "+username+" is trying to login");
+//            }
 
         } else if (RTC_TYPE.equalsIgnoreCase(signalMessage.getType())) {
 
@@ -116,7 +119,7 @@ public class SignalingSocketHandler extends TextWebSocketHandler {
             SignalMessage sm = new SignalMessage();
             sm.setType("generateUrl");
             sm.setDest(signalMessage.getDest());
-            sm.setData("https://video-chat-demo-test.herokuapp.com?n=" + clientIds.get(connSession.getId()));
+            sm.setData("http://localhost:8080/?n=" + clientIds.get(connSession.getId()));
 
             String stringifiedJSONmsg = objectMapper.writeValueAsString(sm);
 

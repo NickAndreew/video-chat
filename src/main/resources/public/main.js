@@ -26,114 +26,108 @@ function logError(error) {
 	console.log(error.name + ': ' + error.message);
 }
 
-function connect(username) {
+function connect() {
 	console.log('connect');
-	var uri = "wss://video-chat-demo-test.herokuapp.com/signal";
+	var uri = "wss://localhost:8080/signal";
+	userName = "";
 
-	userName = username;
 	if (window.location.href.split("com")[1] != null) {
 		peer = window.location.href.split("com")[1].split("=")[1];
 	} else {
 		peer = "";
 	}
 
+	sock = new WebSocket(uri);
 
-	if (username != peer) {
+	sock.onopen = function (e) {
+		console.log('open', e);
 
-		sock = new WebSocket(uri);
+		sock.send(
+			JSON.stringify(
+				{
+					type: "login",
+					data: userName
+				}
+			)
+		);
 
-		sock.onopen = function (e) {
-			console.log('open', e);
+		window.setInterval(function () {
+			pingPong();
+		}, 30000);
 
-			sock.send(
-				JSON.stringify(
-					{
-						type: "login",
-						data: username
-					}
-				)
-			);
-			alert("Connected to server via name: " + username);
+		streamingButton.style = "display: block";
+		connectButton.textContent = "Reconnect";
 
-			window.setInterval(function(){
-				pingPong();
-			}, 58000);
+		setConnected(true);
+	}
 
-			streamingButton.style = "display: block";
-			connectButton.textContent = "Reconnect";
+	sock.onclose = function (e) {
+		console.log('close', e);
+		setConnected(false);
+		stopStreaming();
+		alert("Disconnected from server. Please reconnect or reload the page to start again.");
 
-			setConnected(true);
+		streamingButton.style = "display: none";
+		streamingButton.textContent = "Start Streaming"
+		generateURLforJoin.style = "display: none";
+		connectButton.textContent = "Connect";
+		connectButton.style = "display: block";
+
+		if (sock != null) {
+			sock.close();
+			pc.close();
+			remoteView.removeAttribute("src");
+			selfView.removeAttribute("src");
 		}
+	}
 
-		sock.onclose = function (e) {
-			console.log('close', e);
-			setConnected(false);
-			stopStreaming();
-			alert("Disconnected from server. Please reconnect or reload the page to start again.");
+	sock.onerror = function (e) {
+		console.log('error', e);
+	}
 
-			streamingButton.style = "display: none";
-			streamingButton.textContent = "Start Streaming"
-			generateURLforJoin.style = "display: none";
-			connectButton.textContent = "Connect";
-			connectButton.style = "display: block";
+	sock.onmessage = function (e) {
+		console.log('message', e.data);
 
-			if (sock != null) {
-				sock.close();
-				pc.close();
-				remoteView.removeAttribute("src");
-				selfView.removeAttribute("src");
-			}
-		}
-
-		sock.onerror = function (e) {
-			console.log('error', e);
-		}
-
-		sock.onmessage = function (e) {
-			console.log('message', e.data);
-
-			var message = JSON.parse(e.data);
-			if (message.type === 'rtc') {
-				if (message.data.sdp) {
-					pc.setRemoteDescription(
-						new RTCSessionDescription(message.data.sdp),
-						function () {
-							// if we received an offer, we need to answer
-							if (pc.remoteDescription.type == 'offer') {
-								if (!pc) {
-									startRTC();
-								}
-								peer = message.dest;
-								pc.createAnswer(localDescCreated, logError);
-								generateURLforJoin.style = "display: none";
-								sendOffer.style = "display: none";
+		var message = JSON.parse(e.data);
+		if (message.type === 'rtc') {
+			if (message.data.sdp) {
+				pc.setRemoteDescription(
+					new RTCSessionDescription(message.data.sdp),
+					function () {
+						// if we received an offer, we need to answer
+						if (pc.remoteDescription.type == 'offer') {
+							if (!pc) {
+								startRTC();
 							}
-						},
-						logError);
-				} else {
-					pc.addIceCandidate(new RTCIceCandidate(message.data.candidate));
-				}
+							peer = message.dest;
+							pc.createAnswer(localDescCreated, logError);
+							generateURLforJoin.style = "display: none";
+							sendOffer.style = "display: none";
+						}
+					},
+					logError);
+			} else {
+				pc.addIceCandidate(new RTCIceCandidate(message.data.candidate));
+			}
 
-			} else if (message.type == 'exception') {
-				nameIsBusy(message.data);
+		} else if (message.type == 'login_successful') {
+			userName = message.dest;
 
-				// disconnect();
-			} else if (message.type == 'disconnect') {
-				console.log("RECEIVED MESSAGE -> 'DISCONNECT'");
-				stopStreaming();
-				setConnected(false);
+			alert(message.data);
 
-				remoteView.removeAttribute("src");
-				selfView.removeAttribute("src");
+		} else if (message.type == 'disconnect') {
+			console.log("RECEIVED MESSAGE -> 'DISCONNECT'");
+			stopStreaming();
+			setConnected(false);
 
-			} else if (message.type == 'generateUrl') {
-				if (joinUrlText.textContent == "") {
-					joinUrlText.textContent = message.data;
-				}
+			remoteView.removeAttribute("src");
+			selfView.removeAttribute("src");
+
+		} else if (message.type == 'generateUrl') {
+			if (joinUrlText.textContent == "") {
+				joinUrlText.textContent = message.data;
 			}
 		}
-	} else {
-		alert("Please choose a different name.");
 	}
 }
 
@@ -157,6 +151,7 @@ function startRTC() {
 
 	// once remote stream arrives, sho480w it in the remote video element
 	pc.onaddstream = function (evt) {
+		console.log("stream added");
 		remoteView.src = URL.createObjectURL(evt.stream);
 		remoteStream = evt.stream;
 	};
@@ -241,8 +236,6 @@ function disconnect() {
 			}
 		}
 	);
-
-
 }
 
 function stopStreaming() {
@@ -273,11 +266,6 @@ function stopStreaming() {
 	joinUrlText.textContent = "";
 }
 
-function nameIsBusy(e) {
-	alert(e);
-	document.getElementById("chname").value = '';
-}
-
 function setConnected(bool) {
 	if (bool) {
 		connectionStatus.textContent = "Connected";
@@ -288,11 +276,11 @@ function setConnected(bool) {
 	}
 }
 
-function pingPong(){
-	if(sock!=null){
+function pingPong() {
+	if (sock != null) {
 		console.log("Sock isn't null and client sent message to the server");
 		sendMessage({
-			type:"ping_pong",
+			type: "ping_pong",
 			dest: userName
 		});
 	}
@@ -320,12 +308,11 @@ function streamingButtonSwitch() {
 
 window.onload = function () {
 	console.log("THE PAGE HAS LOADED");
-	var domain = "https://video-chat-demo-test.herokuapp.com/";
+	// var domain = "https://video-chat-demo-test.herokuapp.com/";
+	var domain = "http://localhost:8080/"
 	var loc = window.location.href;
 
-	var text = chnameText.textContent;
 	if (loc != domain) {
-		chnameText.textContent = text + " with User : " + loc.split("com")[1].split("=")[1];
 		join = true;
 	} else {
 		join = false;
@@ -333,13 +320,7 @@ window.onload = function () {
 };
 
 connectButton.addEventListener("click", function () {
-	var input = chname.value;
-
-	if (input != "") {
-		connect(input.toString());
-	} else {
-		alert("Please type name.")
-	}
+	connect();
 });
 
 streamingButton.addEventListener("click", function () {
