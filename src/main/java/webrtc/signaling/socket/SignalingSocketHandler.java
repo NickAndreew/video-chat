@@ -109,7 +109,15 @@ public class SignalingSocketHandler extends TextWebSocketHandler {
 
             session.sendMessage(new TextMessage(stringifiedJSONmsg));
 
+            // clean maps and close session
+            clients.remove(username);
+            clientIds.remove(session.getId());
+            clients.remove(signalMessage.getDest());
+            clientIds.remove(connSession.getId());
+
             session.close();
+
+
         } else if (GENERATE_URL_TYPE.equalsIgnoreCase(signalMessage.getType())) {
             System.out.println("GENERATING URL FOR JOIN method's running...");
 
