@@ -7,6 +7,7 @@ var remoteStream;
 var userName;
 var join;
 var sock;
+var check;
 
 var configuration = {
 	'iceServers': [{
@@ -51,9 +52,7 @@ function connect() {
 			)
 		);
 
-		window.setInterval(function () {
-			pingPong();
-		}, 30000);
+		check = setInterval(pingPong, 30000);
 
 		streamingButton.style = "display: block";
 		connectButton.textContent = "Reconnect";
@@ -67,6 +66,7 @@ function connect() {
 		stopStreaming();
 		alert("Disconnected from server. Please reconnect or reload the page to start again.");
 
+
 		streamingButton.style = "display: none";
 		streamingButton.textContent = "Start Streaming"
 		generateURLforJoin.style = "display: none";
@@ -78,6 +78,7 @@ function connect() {
 			pc.close();
 			remoteView.removeAttribute("src");
 			selfView.removeAttribute("src");
+			clearInterval(check);
 		}
 	}
 
