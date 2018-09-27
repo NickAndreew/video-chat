@@ -28,7 +28,7 @@ function logError(error) {
 
 function connect() {
 	console.log('connect');
-	var uri = "wss://localhost:8080/signal";
+	var uri = "wss://video-chat-demo-test.herokuapp.com/signal";
 	userName = "";
 
 	if (window.location.href.split("com")[1] != null) {
@@ -309,7 +309,7 @@ function streamingButtonSwitch() {
 window.onload = function () {
 	console.log("THE PAGE HAS LOADED");
 	// var domain = "https://video-chat-demo-test.herokuapp.com/";
-	var domain = "http://localhost:8080/"
+	var domain = "https://video-chat-demo-test.herokuapp.com/"
 	var loc = window.location.href;
 
 	if (loc != domain) {

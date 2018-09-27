@@ -119,7 +119,7 @@ public class SignalingSocketHandler extends TextWebSocketHandler {
             SignalMessage sm = new SignalMessage();
             sm.setType("generateUrl");
             sm.setDest(signalMessage.getDest());
-            sm.setData("http://localhost:8080/?n=" + clientIds.get(connSession.getId()));
+            sm.setData("https://video-chat-demo-test.herokuapp.com/?n=" + clientIds.get(connSession.getId()));
 
             String stringifiedJSONmsg = objectMapper.writeValueAsString(sm);
 
