@@ -43,7 +43,7 @@ public class SignalingSocketHandler extends TextWebSocketHandler {
             WebSocketSession client;
             String username;
             do {
-                username = Double.toString(Math.round(Math.random()*1000));
+                username = Integer.toString(Math.round(Math.random()*1000));
                 client = clients.get(username);
 
             } while (client!=null);
