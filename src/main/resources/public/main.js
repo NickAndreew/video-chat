@@ -30,10 +30,11 @@ function logError(error) {
 function connect() {
 	console.log('connect');
 	var uri = "wss://video-chat-demo-test.herokuapp.com/signal";
+	// var uri = "ws://localhost:8080/signal";
 	userName = "";
 
-	if (window.location.href.split("com")[1] != null) {
-		peer = window.location.href.split("com")[1].split("=")[1];
+	if (window.location.href.split("?")[1] != null) {
+		peer = window.location.href.split("?")[1].split("=")[1];
 	} else {
 		peer = "";
 	}
@@ -56,6 +57,7 @@ function connect() {
 
 		streamingButton.style = "display: block";
 		connectButton.textContent = "Reconnect";
+		connectButton.style = "display: none";
 
 		setConnected(true);
 	}
@@ -70,7 +72,6 @@ function connect() {
 		streamingButton.style = "display: none";
 		streamingButton.textContent = "Start Streaming"
 		generateURLforJoin.style = "display: none";
-		connectButton.textContent = "Connect";
 		connectButton.style = "display: block";
 
 		if (sock != null) {
@@ -309,8 +310,8 @@ function streamingButtonSwitch() {
 
 window.onload = function () {
 	console.log("THE PAGE HAS LOADED");
-	// var domain = "https://video-chat-demo-test.herokuapp.com/";
-	var domain = "https://video-chat-demo-test.herokuapp.com/"
+	var domain = "https://video-chat-demo-test.herokuapp.com/";
+	// var domain = "http://localhost:8080/";
 	var loc = window.location.href;
 
 	if (loc != domain) {

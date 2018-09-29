@@ -47,26 +47,25 @@ public class SignalingSocketHandler extends TextWebSocketHandler {
                 client = clients.get(username);
 
             } while (client!=null);
+
             // quick check to verify that the session is not running
-//            if (!client.isOpen()) {
-                LOG.debug("Login {} : OK", username);
-                // saves socket and username
-                clients.put(username, session);
-                clientIds.put(session.getId(), username);
+            LOG.debug("Login {} : OK", username);
+            // saves socket and username
+            clients.put(username, session);
+            clientIds.put(session.getId(), username);
 
-                SignalMessage out = new SignalMessage();
-                out.setType("login_successful");
-                out.setDest(username);
-                out.setData("You have logged in with the following ID: "+username);
+            SignalMessage out = new SignalMessage();
+            out.setType("login_successful");
+            out.setDest(username);
+            out.setData("You have logged in with the following ID: "+username);
 
-                // Convert our object back to JSON
-                String stringifiedJSONmsg = objectMapper.writeValueAsString(out);
+            // Convert our object back to JSON
+            String stringifiedJSONmsg = objectMapper.writeValueAsString(out);
 
-                LOG.debug("send message {}", stringifiedJSONmsg);
+            LOG.debug("send message {}", stringifiedJSONmsg);
 
-                session.sendMessage(new TextMessage(stringifiedJSONmsg));
-                System.out.println("Client with the assigned id "+username+" is trying to login");
-//            }
+            session.sendMessage(new TextMessage(stringifiedJSONmsg));
+            System.out.println("Client with the assigned id "+username+" is trying to login");
 
         } else if (RTC_TYPE.equalsIgnoreCase(signalMessage.getType())) {
 
@@ -110,10 +109,9 @@ public class SignalingSocketHandler extends TextWebSocketHandler {
             session.sendMessage(new TextMessage(stringifiedJSONmsg));
 
             // clean maps and close session
-            clients.remove(username);
-            clientIds.remove(session.getId());
-            clients.remove(signalMessage.getDest());
-            clientIds.remove(connSession.getId());
+
+            clearInactiveConnections(username);
+            clearInactiveConnections(signalMessage.getDest());
 
             session.close();
 
@@ -147,5 +145,29 @@ public class SignalingSocketHandler extends TextWebSocketHandler {
             LOG.debug("send message {}", stringifiedJSONmsg);
             session.sendMessage(new TextMessage(stringifiedJSONmsg));
         }
+
+        //remove inactive connections
+        clearInactiveConnections();
     }
+
+    private void clearInactiveConnections(){
+        for(Map.Entry<String, WebSocketSession> entry : clients.entrySet()){
+            if(!entry.getValue().isOpen()){
+                System.out.println("Removing "+entry.getKey()+" from Connected Clients..");
+                clientIds.remove(entry.getValue().getId());
+                clients.remove(entry.getKey());
+                System.out.println("Removing done.");
+            }
+        }
+    }
+
+    private void clearInactiveConnections(String clientName){
+        if(clients.get(clientName)!=null){
+            System.out.println("Removing "+clientName+" from Connected Clients..");
+            clientIds.remove(clientName);
+            clients.remove(clientName);
+            System.out.println("Removing done.");
+        }
+    }
+
 }
